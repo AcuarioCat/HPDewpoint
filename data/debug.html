@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html><head>
+<title>Dewpoint sensor debug</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+<script type="text/javascript">
+var consoleLog;
+
+  //check for browser support
+  if(typeof(EventSource)!=="undefined") {
+    //create an object, passing it the name and location of the server side script
+    var eSource = new EventSource("debugMsg");
+    window.console.log("Setup events");
+    eSource.addEventListener('debug', function(e) {onDebugMessage(e.data);}, false);
+    }
+  else
+  {
+  alert("Whoops! Your browser doesn't receive server-sent events\n Try using Google Chrome.");
+  }
+
+  function onDebugMessage(msg)
+  {
+    var span = document.createElement('span');
+    span.innerHTML = msg;
+    logElementToConsole(span);
+  }
+
+  function logElementToConsole(element) {
+
+    var p = document.createElement('p');
+    p.style.wordWrap = 'break-word';
+    p.innerHTML = '';
+    p.appendChild(element);
+
+    consoleLog.appendChild(p);
+
+    while (consoleLog.childNodes.length > 500)
+    {
+      consoleLog.removeChild(consoleLog.firstChild);
+    }
+
+    consoleLog.scrollTop = consoleLog.scrollHeight;
+  }
+
+  //Read the settings when the web page has completed its loading
+  $(document).ready(function(){
+    consoleLog = document.getElementById('consoleLog');
+    });
+</script>
+</head>
+
+<body>
+<br>
+<DIV id="echo-log" style="width: 350px; padding-left: 20px; margin-left: 20px;  float: left;">
+<STRONG style="color: white;">Log:</STRONG>
+<DIV id="consoleLog"></DIV>
+</DIV>
+
+</body>
+</html>
